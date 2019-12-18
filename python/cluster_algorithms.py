@@ -16,6 +16,9 @@ class base_kmeans(object):
             'itakura-saito' : lambda u, v: ((u/v)-np.log(u/v)-1).sum(),
             'exp'           : lambda u, v: (np.exp(u)-np.exp(v)-(u-v)*np.exp(v)).sum(),
             'gen_kl'        : lambda u, v: ((u*np.log(u/v)).sum()-(u-v).sum()).sum(),
+            'gen_kls'       : lambda u, v: 0.5*(((u*np.log(u/v)).sum()-(u-v).sum()).sum() + ((v*np.log(v/u)).sum()-(v-u).sum()).sum()),
+            'gen_js'        : lambda u, v: 0.5*(((u*np.log(u/(.5*(u+v)))).sum()-(u-.5*(u+v)).sum()).sum() + \
+                ((v*np.log(v/(.5*(u+v)))).sum() - (v-(.5*(u+v))).sum()).sum()),
             'euclidean'     : 'euclidean'
         } 
         
@@ -62,7 +65,7 @@ class base_kmeans(object):
         predicted_label = np.argmin(dist, axis=1)
         return predicted_label
     
-    def fit(self, X_data, breg_div='euclidean', n_iter=10, tol=1e-3):
+    def fit(self, X_data, breg_div='euclidean', n_iter=10, tol=1e-3, debug=False):
         np.random.seed(self.seed)
         # begin: initialize the centroids
         self.tol           = tol
@@ -74,26 +77,23 @@ class base_kmeans(object):
                                             size=(self.n_clusters, self.n_dim))
         self.sum_total_div = []
         self.labels        = None
-        
-        print('Begin K-means using %s divergence... ' %(self.breg_div))
+        if debug:
+            print('Begin K-means using %s divergence... ' %(self.breg_div))
         self.first_centroids = self.centroids
         for i_iter in range(n_iter):
-            print('Iteraction: %i' %(i_iter+1))
+            if debug:
+                print('Iteraction: %i' %(i_iter+1))
             dist = distance.cdist(self.X, self.centroids,
                                   metric=self.dict_breg_divs[self.breg_div])
             # Classification and Renewal step
             clust_div, new_centers = self.classification_and_renewal(dist)
             # Check convergence
-            #centers_dist = distance.cdist(new_centers, self.centroids,
-            #                              metric=self.dict_breg_divs[self.breg_div])
-            # Save the total divergence in iteraction
             self.sum_total_div.append(clust_div)
             if i_iter == 0:
                 stop_criteria = self.sum_total_div[-1]
             else:
                 stop_criteria = np.abs(self.sum_total_div[-1] - self.sum_total_div[-2])
             if stop_criteria < self.tol:
-            #if np.diag(centers_dist).sum() < self.tol:
                 # Jut to log the number of iteractions
                 self.last_iter = i_iter+1
                 print('The conversion criteria was reached... Stopping!')
@@ -101,3 +101,5 @@ class base_kmeans(object):
             else:
                 self.centroids = new_centers
                 self.last_iter = i_iter+1
+            zeros = self.centroids == 0.
+            self.centroids[zeros] = 1e-1
