@@ -37,6 +37,9 @@ class base_kmeans(object):
     def get_last_iter(self):
         return self.last_iter
     
+    def get_labels(self):
+        return self.labels
+
     def classification_and_renewal(self, distances):
         cluster_div   = []
         new_centroids = np.zeros_like(self.centroids)
