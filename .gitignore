@@ -8,16 +8,12 @@
 # Compiled python
 *.pyc
 
-# Images
-*.pdf
-*.png
-
 # Pickle Files
 *.pickle
 
 # IPython notebook checkpoints
 */.ipynb_checkpoints
 
-# Result Folders
+# Inputs and Result Folders
 data_files/*
 clustering_plots/*
