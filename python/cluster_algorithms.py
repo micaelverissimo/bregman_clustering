@@ -52,6 +52,12 @@ class base_kmeans(object):
             else:
                 new_centroids[icluster] = self.centroids[icluster]
         return np.array(cluster_div).sum(), new_centroids
+
+    def predict_cluster(self, X):
+        dist = distance.cdist(X, self.centroids,
+                              metric=self.dict_breg_divs[self.breg_div])
+        predicted_label = np.argmin(dist, axis=1)
+        return predicted_label
     
     def fit(self, X_data, breg_div='euclidean', n_iter=10, tol=1e-3):
         np.random.seed(self.seed)
@@ -75,11 +81,16 @@ class base_kmeans(object):
             # Classification and Renewal step
             clust_div, new_centers = self.classification_and_renewal(dist)
             # Check convergence
-            centers_dist = distance.cdist(new_centers, self.centroids,
-                                          metric=self.dict_breg_divs[self.breg_div])
+            #centers_dist = distance.cdist(new_centers, self.centroids,
+            #                              metric=self.dict_breg_divs[self.breg_div])
             # Save the total divergence in iteraction
             self.sum_total_div.append(clust_div)
-            if np.diag(centers_dist).sum() < self.tol:
+            if i_iter == 0:
+                stop_criteria = self.sum_total_div[-1]
+            else:
+                stop_criteria = np.abs(self.sum_total_div[-1] - self.sum_total_div[-2])
+            if stop_criteria < self.tol:
+            #if np.diag(centers_dist).sum() < self.tol:
                 # Jut to log the number of iteractions
                 self.last_iter = i_iter+1
                 print('The conversion criteria was reached... Stopping!')
