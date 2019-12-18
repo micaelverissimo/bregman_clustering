@@ -1,0 +1,23 @@
+# Editor temporaries
+*~
+*.swp
+
+# OSX dir files
+.DS_Store
+
+# Compiled python
+*.pyc
+
+# Images
+*.pdf
+*.png
+
+# Pickle Files
+*.pickle
+
+# IPython notebook checkpoints
+*/.ipynb_checkpoints
+
+# Result Folders
+data_files/*
+clustering_plots/*
