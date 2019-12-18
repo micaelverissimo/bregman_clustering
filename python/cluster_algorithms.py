@@ -41,8 +41,11 @@ class base_kmeans(object):
                 dist = distance.cdist(self.X, self.centroids,
                                       metric=lambda u, v: ((u/v)-np.log(u/v)-1).sum())
             elif self.breg_div == 'exp':
-                dist = distance.cdist(self.X[:,:self.n_dim], self.centroids,
+                dist = distance.cdist(self.X, self.centroids,
                                       metric=lambda u, v: (np.exp(u)-np.exp(v)-(u-v)*np.exp(v)).sum())
+            elif self.breg_div == 'gen_kl':
+                dist = distance.cdist(self.X, self.centroids,
+                                      metric=lambda u, v: ((u*np.log(u/v)).sum()-(u-v).sum()).sum())
             else:
                 dist = distance.cdist(self.X, self.centroids, metric=self.breg_div)
 
