@@ -13,6 +13,7 @@
 
 # IPython notebook checkpoints
 */.ipynb_checkpoints
+.vscode/*
 
 # Inputs and Result Folders
 data_files/*
