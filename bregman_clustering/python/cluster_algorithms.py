@@ -1,3 +1,7 @@
+__all__ = [
+    'base_kmeans',
+]
+
 import numpy as np
 from scipy.spatial import distance
 import matplotlib.pyplot as plt
@@ -97,6 +101,7 @@ class base_kmeans(object):
                 # Jut to log the number of iteractions
                 self.last_iter = i_iter+1
                 print('The conversion criteria was reached... Stopping!')
+                print(self.sum_total_div)
                 break
             else:
                 self.centroids = new_centers
