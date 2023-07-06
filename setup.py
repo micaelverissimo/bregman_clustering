@@ -20,7 +20,7 @@ setup(
   install_requires = [
     'numpy',
     'six>=1.12.0',
-    'scipy==1.4.1',
+    'scipy==1.10.0',
     'future',
     'sklearn',
     'scikit-learn>=0.22.1',
